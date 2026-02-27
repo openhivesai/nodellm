@@ -1,7 +1,8 @@
-<p align="center"><strong>Multi-node abstraction for distributed and heterogeneous AI systems.</strong></p>
-
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=17NgL2T4h2TpOgCUxbXvCLVcfyRxGNHj_" alt="NodeLLM" width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://drive.google.com/uc?export=view&id=17NgL2T4h2TpOgCUxbXvCLVcfyRxGNHj_">
+    <img src="https://drive.google.com/uc?export=view&id=17NgL2T4h2TpOgCUxbXvCLVcfyRxGNHj_" alt="NodeLLM" width="600">
+  </picture>
 </p>
 
 NodeLLM is an orchestration and abstraction layer for designing, deploying,
