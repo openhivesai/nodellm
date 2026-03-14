@@ -1,0 +1,313 @@
+{
+  "schema": "nodellm-evidence-pack/v1",
+  "pack_id": "s1-federated-rag-demo1",
+  "scenario": "S1 — Federated RAG",
+  "description": "Comparison of isolated vs P2P-federated RAG on the same prompt. Demonstrates cross-node document federation, context expansion beyond local RAG corpus, and KV-first routing decisions. Same prompt, same node N1, P2P off then on.",
+  "kv_first_claims_demonstrated": [
+    "Federated RAG retrieves documents distributed across nodes",
+    "Runtime detects local RAG coverage gap and federates automatically",
+    "P2P mode expands source coverage: 3 local docs → 5 federated docs",
+    "routing_decision driven by capability_contract, not user configuration"
+  ],
+  "demo": {
+    "date": "2026-03-12",
+    "event": "NodeLLM Demo 1 — Webinaire technique",
+    "primary_node": {
+      "node_id": "0e707b8f3b17e48e",
+      "label": "N1",
+      "hardware": "Apple M4 Max, 128 GB RAM, Metal GPU",
+      "model": "Qwen2.5-32B-Instruct-Q4_K_M",
+      "nnm_model": "Llama-3.2-1B-Instruct-Q4_K_M (Hiveon)",
+      "context_window": 4096,
+      "rag_documents_local": 9
+    },
+    "peer_node": {
+      "node_id": "adddb566f2bcd6c9",
+      "label": "N2",
+      "hardware": "Apple M1 Pro, 16 GB RAM, Metal GPU",
+      "model": "Qwen2.5-3B-Instruct-Q4_K_M",
+      "context_window": 4096,
+      "rag_documents_local": 16
+    },
+    "transport": "QUIC over Ethernet",
+    "demo_conditions": "Live demo under system load: OBS screen recording + Google Meet streaming + dual local nodes running simultaneously. Timing values reflect live-demo conditions, not reference performance. Reference performance figures are in the webinar slides."
+  },
+  "prompt": "Le model collapse est un phénomène récurrent dans la littérature récente. En t'appuyant sur les documents disponibles, synthétise les mécanismes identifiés, les conditions d'apparition, et les stratégies de mitigation.",
+  "rag_corpus": {
+    "distribution": "Corpus split across N1 and N2. No single node holds all documents.",
+    "model_collapse_papers_on_N1": [
+      {
+        "uuid": "a1d54c20-a153-4c8b-972b-b15354ac6a59",
+        "title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
+        "authors": "Shumailov et al.",
+        "source": "arXiv:2305.17493v3"
+      },
+      {
+        "uuid": "d9dfdc6a-f8c3-47d3-80b8-d780a0118440",
+        "title": "Model Collapse Demystified: The Case of Regression",
+        "authors": "Dohmatob et al.",
+        "source": "arXiv:2402.07712v2"
+      },
+      {
+        "uuid": "8f85453d-cfa8-4052-84dc-ef38430a0ba5",
+        "title": "Artificial Hivemind: The Open-Ended Homogeneity of Language Models",
+        "source": "arXiv:2510.22954v1",
+        "note": "Homogeneity/monoculture perspective — adjacent to model collapse domain"
+      }
+    ],
+    "model_collapse_papers_on_N2_only": [
+      {
+        "title": "Is Model Collapse Inevitable? Breaking the Curse of Recursion",
+        "authors": "Gerstgrasser et al."
+      },
+      {
+        "title": "Model Collapse Is Not a Bug but a Feature in Machine Unlearning for LLMs"
+      },
+      {
+        "title": "The Curse of Recursion: Training on Generated Data Makes Models Forget",
+        "authors": "Shumailov et al.",
+        "source": "Nature (published version)"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "run_id": "run_1_isolated",
+      "label": "Run 1 — Isolated mode (N1 only)",
+      "correlation_id": "corr_1e1313fd7a8d46cb941e37d0a2769b95",
+      "timestamps": {
+        "session_started": "2026-03-12T14:31:30.027763Z",
+        "result_aggregated": "2026-03-12T14:32:50.294871Z",
+        "total_duration_s": 80.27
+      },
+      "capability_contract": {
+        "mode": "local",
+        "p2p_enabled": false,
+        "remote_models_enabled": false,
+        "federation_enabled": false
+      },
+      "rag": {
+        "scope": "LOCAL",
+        "top_k": 7,
+        "raw_retrieval": "84 chunks from 4 docs",
+        "after_reranking": "7 chunks from 3 docs",
+        "docs_retrieved": [
+          "a1d54c20-a153-4c8b-972b-b15354ac6a59",
+          "8f85453d-cfa8-4052-84dc-ef38430a0ba5",
+          "d9dfdc6a-f8c3-47d3-80b8-d780a0118440"
+        ],
+        "context_estimate_tokens": 3407,
+        "context_capacity_tokens": 4096,
+        "overbudget": false
+      },
+      "kv_cache": {
+        "session_kv_lookup_result": "miss",
+        "content_kv_lookup_result": "miss",
+        "session_kv_commit": "kv-1ec8a0fe4eb9"
+      },
+      "generation": {
+        "mode": "passive_rag",
+        "chars_generated": 2683,
+        "generation_time_s": 65.05,
+        "prompt_tokens": 1174,
+        "completion_tokens": 651,
+        "finish_reason": "completed"
+      },
+      "key_traces": [
+        {
+          "event": "routing_decision",
+          "timestamp": "2026-03-12T14:31:30.030147Z",
+          "strategy": "capability_driven_local_first",
+          "selected_node": "0e707b8f3b17e48e",
+          "budget_objective": null
+        },
+        {
+          "event": "decision_rationale",
+          "timestamp": "2026-03-12T14:31:30.030182Z",
+          "confidence": 1.0,
+          "uncertainty": ["network_unavailable"],
+          "missing_signals": ["peers_online"]
+        },
+        {
+          "event": "context_collected",
+          "timestamp": "2026-03-12T14:31:41.400791Z",
+          "rag_chunks": 7,
+          "peers": 0,
+          "nnm_active": false
+        },
+        {
+          "event": "result_aggregated",
+          "timestamp": "2026-03-12T14:32:50.294871Z",
+          "mode": "passive_rag",
+          "success": true
+        },
+        {
+          "event": "session_completed",
+          "timestamp": "2026-03-12T14:32:50.294951Z",
+          "mode": "passive_rag"
+        }
+      ],
+      "evidence_pack_status": "complete",
+      "interpretation": "Isolated mode: N1 retrieves from its local corpus only. 3 documents retrieved, all from N1. No awareness of N2 corpus. No KV reuse possible (cold start). Generation correct but limited to locally-held papers."
+    },
+    {
+      "run_id": "run_2_federated",
+      "label": "Run 2 — P2P active, federated RAG",
+      "correlation_id": "corr_4c3e0b683d074187ba41ba6986539ee7",
+      "timestamps": {
+        "session_started": "2026-03-12T14:35:45.515175Z",
+        "handoff_evaluation": "2026-03-12T14:35:49.940834Z",
+        "nnm_cycle_0": "2026-03-12T14:35:53Z",
+        "remote_prefill_complete": "2026-03-12T14:50:13Z",
+        "result_aggregated": "2026-03-12T14:52:12.214975Z",
+        "total_duration_s": 987
+      },
+      "capability_contract": {
+        "mode": "intelligent",
+        "p2p_enabled": true,
+        "remote_models_enabled": true,
+        "federation_enabled": true
+      },
+      "budget_profile": {
+        "objective": "QUALITY",
+        "rag_top_k": 12,
+        "rag_scope_override": "GLOBAL",
+        "rag_target_ctx_utilization": 0.85,
+        "handoff_bias": "quality"
+      },
+      "rag": {
+        "phase_1_initial_federation": {
+          "scope": "GLOBAL",
+          "top_k": 12,
+          "skip_local": true,
+          "result": "9 chunks from 4 docs",
+          "docs": [
+            "The Curse of Recursion: Training on Generated Data Makes Models Forget (Shumailov et al., Nature)",
+            "a1d54c20-a153-4c8b-972b-b15354ac6a59",
+            "Is Model Collapse Inevitable? Breaking the Curse of Recursion (Gerstgrasser et al.)",
+            "d9dfdc6a-f8c3-47d3-80b8-d780a0118440"
+          ]
+        },
+        "phase_2_expanded_for_prefill": {
+          "scope": "GLOBAL",
+          "top_k": 28,
+          "skip_local": true,
+          "result": "26 chunks from 5 docs",
+          "docs": [
+            "Model Collapse Is Not a Bug but a Feature in Machine Unlearning for LLMs",
+            "d9dfdc6a-f8c3-47d3-80b8-d780a0118440",
+            "The Curse of Recursion: Training on Generated Data Makes Models Forget (Shumailov et al., Nature)",
+            "a1d54c20-a153-4c8b-972b-b15354ac6a59",
+            "Is Model Collapse Inevitable? Breaking the Curse of Recursion (Gerstgrasser et al.)"
+          ],
+          "chars_injected_into_handoff": 14385
+        },
+        "context_estimate_tokens": 5939,
+        "context_capacity_N1_tokens": 4096,
+        "overbudget": true
+      },
+      "handoff_evaluation": {
+        "local_overbudget": true,
+        "handoff_required": true,
+        "budget_scoring": {
+          "local_score": 0.658,
+          "best_peer_id": "adddb566f2bcd6c9",
+          "best_peer_score": 0.875,
+          "threshold": 0.758,
+          "decision": "handoff"
+        }
+      },
+      "remote_prefill": {
+        "delegate_node": "adddb566f2bcd6c9",
+        "kv_ref": "kv-179a4e60c388",
+        "kvcc_level": "strict",
+        "kvcc_fingerprint": "9ba99b6157a0770804d894f6206d5edae1709db9789d4e9a03e4fc3bda37936f",
+        "prefill_ms": 84467,
+        "distillation_ms": 765496,
+        "kv_transfer_ms": 1586,
+        "transport": "QUIC",
+        "tokens_prefilled": 581,
+        "chunks": 582,
+        "note_on_distillation": "NNM distillation (Llama-3.2-1B Hiveon on CPU-only node N3) dominates wall time. Remote prefill itself (84s) is separate from distillation overhead."
+      },
+      "nnm_orchestration": {
+        "cycles": 1,
+        "stop_reason": "DONE",
+        "delegated": false,
+        "nnm_wall_time_s": 863.64
+      },
+      "generation": {
+        "mode": "nnm_classical",
+        "node": "0e707b8f3b17e48e (N1, GPU)",
+        "kv_ref_used": "kv-179a4e60c388",
+        "prompt_tokens": 819,
+        "completion_tokens": 718,
+        "finish_reason": "completed"
+      },
+      "key_traces": [
+        {
+          "event": "budget_profile_used",
+          "timestamp": "2026-03-12T14:35:45.515472Z",
+          "objective": "QUALITY",
+          "rag_top_k": 12,
+          "rag_scope_override": "GLOBAL"
+        },
+        {
+          "event": "handoff_evaluation",
+          "timestamp": "2026-03-12T14:35:49.940834Z",
+          "local_overbudget": true,
+          "handoff_by_budget": true,
+          "local_score": 0.658,
+          "best_peer_score": 0.875,
+          "handoff": true
+        },
+        {
+          "event": "kv_reuse_applied",
+          "timestamp": "2026-03-12T14:35:45.515535Z",
+          "reason": "nnm_gate_active"
+        },
+        {
+          "event": "kv_intent_executed",
+          "timestamp": "2026-03-12T14:50:13.574076Z",
+          "intent_type": "KV_ATTACH",
+          "kv_ref": "kv-179a4e60c388",
+          "success": true
+        },
+        {
+          "event": "result_aggregated",
+          "timestamp": "2026-03-12T14:52:12.214975Z",
+          "mode": "nnm_classical",
+          "success": true
+        },
+        {
+          "event": "evidence_pack_minimal",
+          "timestamp": "2026-03-12T14:52:12.215405Z",
+          "status": "complete",
+          "missing_events": [],
+          "present_events": [
+            "budget_profile_used", "capabilities_required", "content_identity_validated",
+            "content_kv_lookup", "content_kv_miss", "context_collected", "decision_rationale",
+            "group_context", "group_formed", "handoff_evaluation", "intent_received",
+            "kv_reuse_applied", "nnm_orchestration_complete", "nodes_considered",
+            "prefill_decode_input_validated", "rag_context_fit_for_delegate",
+            "rag_expanded_for_prefill", "remote_prefill_completed", "result_aggregated",
+            "result_validated", "routing_decision", "session_completed", "session_kv_commit",
+            "session_kv_lookup", "session_kv_miss", "session_started"
+          ]
+        }
+      ],
+      "interpretation": "P2P active + QUALITY budget: federation retrieves 5 papers including 3 from N2. 26 chunks exceed N1 4k context → runtime detects overbudget, scores peers, delegates prefill to N3. KV artifact transferred via QUIC. N1 decodes at full GPU speed. All decisions automatic, no user configuration changed."
+    }
+  ],
+  "comparison": {
+    "run_1_isolated_vs_run_2_federated": {
+      "docs_retrieved": {"isolated": 3, "federated": 5},
+      "rag_chunks": {"isolated": 7, "federated": 26},
+      "context_tokens_used": {"isolated": 3407, "federated": "32768 (on N3)"},
+      "remote_prefill": {"isolated": false, "federated": true},
+      "kv_transfer": {"isolated": "none", "federated": "kv-179a4e60c388 via QUIC"},
+      "total_duration_s": {"isolated": 80, "federated": 987},
+      "note": "Federated run total includes NNM distillation on CPU-only N3 under live demo load (OBS + Meet). Reference performance without demo load overhead: see webinar slides."
+    }
+  }
+}

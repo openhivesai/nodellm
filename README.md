@@ -32,16 +32,31 @@ real-world constraints.
 NodeLLM does not optimize compute. It optimizes the composition,
 distribution, and cooperation of capabilities.
 
-## Foundational Paper
+## Papers
 
-The **Foundational Paper** defines the invariants, layers, and non-negotiable
-principles that structure NodeLLM.
+| Paper | Description | Status |
+|-------|-------------|--------|
+| [Foundational Paper v1.1](papers/foundational/NodeLLM-Foundational%20Paper_v1.1.pdf) | Architecture, invariants, 5-layer model | Published |
+| NNM Runtime + LoRA | Runtime coordination, structured intents, governance | Coming soon |
+| NNH | Network-Native Heads — from LoRA to architectural heads | Coming soon |
 
 > AI has progressed faster than the architectures capable of sustainably
 > organizing it in diversity — and this mismatch now hinders its adoption
 > as much as its evolution.
 
-→ [NodeLLM — Foundational Paper v1.1](papers/foundational/NodeLLM-Foundational%20Paper_v1.1.pdf)
+## KV-first
+
+NodeLLM is the reference implementation of the
+[KV-first](https://github.com/openhivesai/kv-first) open framework.
+
+KV-first defines compatibility contracts (KVCC), protocols, and conformance
+criteria for KV cache interoperability across heterogeneous LLM inference
+systems. It is published independently as an open standard by OpenHives AI.
+
+## Evidence
+
+Evidence packs with traces, metrics, and reproducible results from Demo 1
+(March 12, 2026) are published in [`evidence/`](evidence/).
 
 ## Citation
 
