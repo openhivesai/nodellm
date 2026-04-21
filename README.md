@@ -32,17 +32,79 @@ real-world constraints.
 NodeLLM does not optimize compute. It optimizes the composition,
 distribution, and cooperation of capabilities.
 
-## Papers
+## Download
 
-| Paper | Description | Status |
-|-------|-------------|--------|
-| [Foundational Paper v1.1](papers/foundational/NodeLLM-Foundational%20Paper_v1.1.pdf) | Architecture, invariants, 5-layer model | Published |
-| NNM Runtime + LoRA | Runtime coordination, structured intents, governance | Coming soon |
-| NNH | Network-Native Heads — from LoRA to architectural heads | Coming soon |
+Pre-built binaries are published on the [Releases page](https://github.com/openhivesai/nodellm/releases).
 
-> AI has progressed faster than the architectures capable of sustainably
-> organizing it in diversity — and this mismatch now hinders its adoption
-> as much as its evolution.
+| Platform                                                  | Asset                                                 |
+|-----------------------------------------------------------|-------------------------------------------------------|
+| macOS (Apple Silicon)                                     | `nodellm-<version>-aarch64-apple-darwin.tar.gz`       |
+| Linux x86_64 (servers, desktops)                          | `nodellm-<version>-x86_64-unknown-linux-gnu.tar.gz`   |
+| Linux aarch64 (Jetson, DGX Spark, Graviton, Raspberry Pi) | `nodellm-<version>-aarch64-unknown-linux-gnu.tar.gz`  |
+
+Each archive ships the `nodellm` binary and the dynamic libraries it needs.
+No installer, no package manager required.
+
+> NodeLLM is distributed as a compiled binary. Source code is not public.
+> Trust comes from the open [KV-first](https://github.com/openhivesai/kv-first)
+> standard, from the published evidence packs, and from the papers referenced
+> below — not from access to runtime internals.
+
+## Quickstart — two-node cluster
+
+After extracting the archive:
+
+```bash
+# Node 1 — default ports
+./nodellm serve
+
+# Node 2 — on a second machine, or on the same host with different ports
+NODELLM_USER_DIR=~/.openhivesai/nodellm2 \
+  ./nodellm serve --port 50052 --quic-port 4433
+```
+
+Point node 2 at node 1 using either static peers or mDNS discovery:
+
+```bash
+./nodellm peers add <node-1-ip>:50051 --name node-1
+./nodellm network enable
+./nodellm network discovery enable   # optional — mDNS on local network
+```
+
+Once both nodes are up and paired, the cluster exposes a gRPC endpoint
+on `127.0.0.1:50051` (loopback). Health check:
+
+```bash
+grpcurl -plaintext localhost:50051 nodellm.NodeLLMService/HealthCheck
+```
+
+Models (GGUF) are placed in `~/.openhivesai/nodellm/models/<model-name>/`
+with a `manifest.json` descriptor. See the release notes for the example
+manifest and a walkthrough with Qwen2.5-3B-Instruct.
+
+## CLI overview
+
+```
+nodellm
+├── serve                                   Start the runtime (default)
+├── stop                                    Stop the runtime
+├── models {list, show, ps, load, unload, add, remove}
+├── run <model>                             Load model + interactive chat
+├── chat                                    Interactive chat
+├── kv {list, stats, show, rm, prune}
+├── peers {list, show, add, remove, revoke, allow, blocked}
+├── network {status, enable, disable}
+│   └── discovery {enable, disable}         Toggle mDNS
+├── top                                     Live resource dashboard
+├── logs {show, follow, errors, warnings, search}
+├── license {show, add, verify}
+├── version
+├── nnm {status, update}
+└── http {status, start, stop, enable, disable}
+```
+
+Full options, environment variables, configuration schema and peer
+protocol diagrams ship with each release in `docs/` inside the archive.
 
 ## KV-first
 
@@ -53,10 +115,43 @@ KV-first defines compatibility contracts (KVCC), protocols, and conformance
 criteria for KV cache interoperability across heterogeneous LLM inference
 systems. It is published independently as an open standard by OpenHives AI.
 
+Conformance scripts and test vectors live in the
+[`kv-first/conformance/`](https://github.com/openhivesai/kv-first/tree/main/conformance)
+subtree and can be run against any NodeLLM release to verify L0 compliance.
+
+## Papers
+
+| Paper | Description | Status |
+|-------|-------------|--------|
+| [Foundational Paper v1.1](papers/foundational/NodeLLM-Foundational%20Paper_v1.1.pdf) | Architecture, invariants, 5-layer model | Published |
+| NNM Runtime + LoRA | Runtime coordination, structured intents, governance | Coming soon |
+
+> AI has progressed faster than the architectures capable of sustainably
+> organizing it in diversity — and this mismatch now hinders its adoption
+> as much as its evolution.
+
 ## Evidence
 
 Evidence packs with traces, metrics, and reproducible results from Demo 1
-(March 12, 2026) are published in [`evidence/`](evidence/).
+(March 12, 2026) are published in [`evidence/`](evidence/). They were
+produced by an earlier implementation of NodeLLM and document the
+architecture — current Releases ship the Rust runtime that superseded it.
+
+## License
+
+NodeLLM uses **two coexisting licenses**, one per asset class:
+
+| Asset                         | License                                      | File |
+|-------------------------------|----------------------------------------------|------|
+| Papers and evidence packs     | Creative Commons BY-NC-ND 4.0                | [`LICENCE`](LICENCE) |
+| Binaries (from Releases)      | OpenHives NodeLLM Commercial License         | [`LICENSE-BINARY.md`](LICENSE-BINARY.md) |
+
+The binary license is **free for clusters of up to 2 nodes** — enough
+to evaluate, prototype, and validate. Production use beyond 2 nodes
+requires a commercial license. Activation keys are generated on the
+OpenHives side and delivered as a signed `license.key` file.
+
+For commercial licensing, contact **licensing@openhives.ai**.
 
 ## Citation
 
@@ -75,13 +170,10 @@ Evidence packs with traces, metrics, and reproducible results from Demo 1
 
 ## Project Status
 
-NodeLLM is under active development. This repository serves as the public
-reference for the project's architecture and publications.
-
-## Licence
-
-This work is licensed under
-[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+NodeLLM is under active development. This repository is the public home of
+the project — it hosts the research publications, the evidence packs, and
+the official binary releases. The runtime source code is maintained in a
+private repository.
 
 ## About
 
