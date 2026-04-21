@@ -4,6 +4,14 @@ Evidence packs contain traces, metrics, and reproducible results from live
 NodeLLM demonstrations. Each pack is extracted directly from runtime logs
 and contains raw trace events with correlation IDs for independent verification.
 
+> **Note on the implementation.** The Demo 1 packs below were produced by
+> an earlier implementation of NodeLLM. They document the architecture and
+> the KV-first claims, not the exact performance of the current binary.
+> The Rust runtime distributed from the
+> [Releases page](https://github.com/openhivesai/nodellm/releases) is the
+> reimplementation that superseded it. Future evidence packs produced by
+> the Rust runtime will be published here as new releases ship.
+
 ## Demo 1 — March 12, 2026
 
 **Event:** NodeLLM Demo 1 — Webinaire technique
