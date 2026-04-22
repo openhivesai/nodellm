@@ -36,11 +36,15 @@ distribution, and cooperation of capabilities.
 
 Pre-built binaries are published on the [Releases page](https://github.com/openhivesai/nodellm/releases).
 
-| Platform                                                  | Asset                                                 |
-|-----------------------------------------------------------|-------------------------------------------------------|
-| macOS (Apple Silicon)                                     | `nodellm-<version>-aarch64-apple-darwin.tar.gz`       |
-| Linux x86_64 (servers, desktops)                          | `nodellm-<version>-x86_64-unknown-linux-gnu.tar.gz`   |
-| Linux aarch64 (Jetson, DGX Spark, Graviton, Raspberry Pi) | `nodellm-<version>-aarch64-unknown-linux-gnu.tar.gz`  |
+| Platform                                        | Backend     | Asset                                                        |
+|-------------------------------------------------|-------------|--------------------------------------------------------------|
+| macOS (Apple Silicon)                           | Metal (GPU) | `nodellm-<version>-aarch64-apple-darwin.tar.gz`              |
+| Linux x86_64 (servers, desktops)                | CPU         | `nodellm-<version>-x86_64-unknown-linux-gnu.tar.gz`          |
+| Linux aarch64 (Graviton, Raspberry Pi, Jetson)  | CPU         | `nodellm-<version>-aarch64-unknown-linux-gnu.tar.gz`         |
+| Linux aarch64 (Jetson Orin, DGX Spark)          | CUDA        | `nodellm-<version>-aarch64-unknown-linux-gnu-cuda.tar.gz`    |
+
+The CUDA variant requires a CUDA 12.x runtime on the host
+(JetPack 6+ on Jetson Orin).
 
 Each archive ships the `nodellm` binary and the dynamic libraries it needs.
 No installer, no package manager required.

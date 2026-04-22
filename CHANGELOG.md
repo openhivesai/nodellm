@@ -13,8 +13,12 @@ _First public binary release is in preparation._
 
 ### Expected in v0.1.0
 
-- First public `nodellm` binary — Apple Silicon, Linux x86_64, Linux aarch64
-  (Jetson / DGX Spark / Graviton / Raspberry Pi — CPU-only; GPU variant to follow)
+- First public `nodellm` binary
+- Platforms:
+  - macOS Apple Silicon (Metal GPU backend)
+  - Linux x86_64 (CPU)
+  - Linux aarch64 (CPU — Graviton, Raspberry Pi, Jetson CPU mode)
+  - Linux aarch64 CUDA (Jetson Orin SM_87, DGX Spark SM_90)
 - gRPC API surface (`nodellm.proto`) documented in the release archive
 - CLI: `serve`, `models`, `run`, `chat`, `kv`, `peers`, `network`, `top`,
   `logs`, `license`, `version`, `nnm`, `http`
