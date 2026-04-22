@@ -36,15 +36,18 @@ distribution, and cooperation of capabilities.
 
 Pre-built binaries are published on the [Releases page](https://github.com/openhivesai/nodellm/releases).
 
-| Platform                                        | Backend     | Asset                                                        |
-|-------------------------------------------------|-------------|--------------------------------------------------------------|
-| macOS (Apple Silicon)                           | Metal (GPU) | `nodellm-<version>-aarch64-apple-darwin.tar.gz`              |
-| Linux x86_64 (servers, desktops)                | CPU         | `nodellm-<version>-x86_64-unknown-linux-gnu.tar.gz`          |
-| Linux aarch64 (Graviton, Raspberry Pi, Jetson)  | CPU         | `nodellm-<version>-aarch64-unknown-linux-gnu.tar.gz`         |
-| Linux aarch64 (Jetson Orin, DGX Spark)          | CUDA        | `nodellm-<version>-aarch64-unknown-linux-gnu-cuda.tar.gz`    |
+| Platform                             | Backend                | Asset                                                 |
+|--------------------------------------|------------------------|-------------------------------------------------------|
+| macOS (Apple Silicon)                | Metal (GPU)            | `nodellm-<version>-aarch64-apple-darwin.tar.gz`       |
+| Linux x86_64 (servers, desktops)     | CPU                    | `nodellm-<version>-x86_64-unknown-linux-gnu.tar.gz`   |
+| Linux aarch64 (Jetson Orin, DGX Spark, Graviton, Raspberry Pi) | CUDA + CPU (auto) | `nodellm-<version>-aarch64-unknown-linux-gnu.tar.gz`  |
 
-The CUDA variant requires a CUDA 12.x runtime on the host
-(JetPack 6+ on Jetson Orin).
+The aarch64 Linux build ships both CUDA and CPU backends as dynamic
+plugins. On hosts where the CUDA 12 runtime is present (JetPack 6+ on
+Jetson Orin, DGX Spark, any aarch64 Linux with CUDA installed), the GPU
+backend is used automatically. On hosts without CUDA (Graviton,
+Raspberry Pi, Jetson without JetPack), the binary falls back to the
+CPU backend — no separate artifact needed.
 
 Each archive ships the `nodellm` binary and the dynamic libraries it needs.
 No installer, no package manager required.
